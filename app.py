@@ -74,7 +74,9 @@ def analyze():
                 'ideal': str(ideal_accents),
                 'type': type_name,
                 'ratio': ratio,
-                'color_class': color
+                'color_class': color,
+                'rhyme_sound': v[7] if len(v) > 7 else '',
+                'rhyme_label': v[8] if len(v) > 8 else ''
             })
 
         total_verses = len(analysis_results)

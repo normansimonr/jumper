@@ -82,6 +82,7 @@
                                     <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">N</th>
                                     <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">Verso</th>
                                     <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">Síl.</th>
+                                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">Rima</th>
                                     <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">Acentos</th>
                                     <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">Tipo</th>
                                     <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 text-right">%</th>
@@ -90,7 +91,7 @@
                             <tbody id="resultsBody" class="divide-y divide-slate-100 mono text-sm">
                                 <!-- Results will be injected here -->
                                 <tr>
-                                    <td colspan="6" class="px-4 py-12 text-center text-slate-400 italic">
+                                    <td colspan="7" class="px-4 py-12 text-center text-slate-400 italic">
                                         Introduce un poema para ver el análisis.
                                     </td>
                                 </tr>
@@ -121,7 +122,7 @@
             const trend = trendInput.value.trim();
 
             if (!text) {
-                resultsBody.innerHTML = '<tr><td colspan="6" class="px-4 py-12 text-center text-slate-400 italic">Introduce un poema para ver el análisis.</td></tr>';
+                resultsBody.innerHTML = '<tr><td colspan="7" class="px-4 py-12 text-center text-slate-400 italic">Introduce un poema para ver el análisis.</td></tr>';
                 statusInfo.textContent = '';
                 lastAnalysisData = null;
                 return;
@@ -155,6 +156,7 @@
                         <td class="px-4 py-3 text-slate-400 border-b border-slate-100">${row.n}</td>
                         <td class="px-4 py-3 border-b border-slate-100 ${row.color_class}">${row.verse}<br><span class="text-[10px] text-slate-400 font-normal">${row.analyzed}</span></td>
                         <td class="px-4 py-3 border-b border-slate-100 font-semibold">${row.syllables}</td>
+                        <td class="px-4 py-3 border-b border-slate-100"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-600">${row.rhyme_label}</span> <span class="text-[10px] text-slate-400">-${row.rhyme_sound}</span></td>
                         <td class="px-4 py-3 border-b border-slate-100 text-xs">${row.accents}</td>
                         <td class="px-4 py-3 border-b border-slate-100 text-xs text-slate-500">${row.type}</td>
                         <td class="px-4 py-3 border-b border-slate-100 text-right font-medium ${row.ratio === 100 ? 'text-green-600' : 'text-slate-400'}">${row.ratio}%</td>
@@ -167,12 +169,13 @@
         function downloadAsCsv() {
             if (!lastAnalysisData || !lastAnalysisData.results.length) return;
 
-            const headers = ['N', 'Verso', 'Escansión', 'Síl.', 'Acentos', 'Tipo', 'Ratio %'];
+            const headers = ['N', 'Verso', 'Escansión', 'Síl.', 'Rima', 'Acentos', 'Tipo', 'Ratio %'];
             const rows = lastAnalysisData.results.map(r => [
                 r.n,
                 `"${r.verse.replace(/"/g, '""')}"`,
                 `"${r.analyzed.replace(/"/g, '""')}"`,
                 r.syllables,
+                `${r.rhyme_label} (-${r.rhyme_sound})`,
                 `"${r.accents.replace(/"/g, '""')}"`,
                 `"${r.type.replace(/"/g, '""')}"`,
                 r.ratio

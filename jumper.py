@@ -706,4 +706,58 @@ def escandir_texto(texto):
         Returns:
             list: una lista con el análisis métrico de todos los versos
     """
-    return escandir_lista_versos(texto.split('\n'))
+    analisis = escandir_lista_versos(texto.split('\n'))
+    
+    # Añadir detección de rimas
+    rimas = []
+    for v in analisis:
+        verso_original = v[0]
+        palabras = normalizar(verso_original).split()
+        if palabras:
+            palabra_final = palabras[-1]
+            rimas.append(extraer_rima(palabra_final))
+        else:
+            rimas.append("")
+            
+    # Asignar etiquetas de rima (A, B, C...)
+    etiquetas_rima = []
+    mapa_rimas = {}
+    contador_rima = 0
+    letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    
+    for rima in rimas:
+        if not rima:
+            etiquetas_rima.append("-")
+            continue
+        if rima not in mapa_rimas:
+            mapa_rimas[rima] = letras[contador_rima % len(letras)]
+            contador_rima += 1
+        etiquetas_rima.append(mapa_rimas[rima])
+        
+    # Combinar rima con el análisis existente
+    for i, v in enumerate(analisis):
+        v.append(rimas[i])          # Índice 7: Sonido de la rima
+        v.append(etiquetas_rima[i]) # Índice 8: Etiqueta (A, B...)
+        
+    return analisis
+
+def extraer_rima(palabra):
+    """Extrae el sonido de la rima de una palabra a partir de la última vocal acentuada.
+    """
+    palabra = normalizar(palabra)
+    if not palabra: return ""
+    
+    # Normalización fonética básica
+    palabra = palabra.replace('v', 'b').replace('y', 'i').replace('h', '')
+    palabra = palabra.replace('ge', 'je').replace('gi', 'ji').replace('z', 's')
+    
+    silabas, acento, factor = palabra_silabas_acentos(palabra)
+    
+    # Encontrar la posición del carácter de la vocal acentuada
+    vocal_count = 0
+    for i, c in enumerate(palabra):
+        if c in vocales:
+            vocal_count += 1
+            if vocal_count == acento:
+                return palabra[i:]
+    return ""
