@@ -6,6 +6,15 @@ Interfaz para el algoritmo de escansión de poesía española sin silabación en
 
 Está disponible para Windows y Linux en la Sección "Releases".
 
+## Web App
+
+Se ha añadido una interfaz web moderna basada en Flask y Tailwind CSS. Para ejecutarla:
+
+1. Instalar dependencias: `pip install flask`
+2. Ejecutar el servidor: `python3 run_web.py`
+
+El navegador se abrirá automáticamente en `http://localhost:5000`.
+
 
 Este código se enmarca dentro de las investigaciones del grupo Research Group in Natural Language Processing and Information Retrieval at UNED (Spanish Open Distance University) https://sites.google.com/view/nlp-uned/home
 

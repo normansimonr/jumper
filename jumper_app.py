@@ -19,6 +19,7 @@ class VentanaContador:
     def dibujar(self):
         self.root = Tk()
         self.root.title("Jumper: Contador de sílabas y acentos en tiempo real")
+        self.root.geometry("1200x800") # Set initial window size
 
         # Group0 Frame ----------------------------------------------------
         group0 = LabelFrame(self.root, text="Tendencia versal", padx=2, pady=2)
@@ -28,7 +29,7 @@ class VentanaContador:
         group0.columnconfigure(0, weight=1)
 
         # Create the textbox
-        self.trend = Entry(group0, width=50, font=("Verdana", 11))
+        self.trend = Entry(group0, width=120, font=("Verdana", 11))
         self.trend.grid(row=0, column=0, sticky=E + W + N + S)
 
         # Group1 Frame ----------------------------------------------------
@@ -39,7 +40,7 @@ class VentanaContador:
         group1.columnconfigure(0, weight=1)
 
         # Create the textbox
-        self.txt_origen = ScrolledText(group1, width=80, height=10, font=("Times New Roman", 12))
+        self.txt_origen = ScrolledText(group1, width=120, height=20, font=("Times New Roman", 12))
         self.txt_origen.grid(row=0, column=0, sticky=E + W + N + S)
 
         # Group2 Frame ----------------------------------------------------
@@ -56,10 +57,10 @@ class VentanaContador:
         self.txt_destino.configure(yscrollcommand=vsb.set)
         
         # set column headings
-        tamanios = (50, 400, 400, 80, 180, 180, 350, 100)
+        tamanios = (40, 300, 300, 60, 150, 150, 250, 80)
         for i,col in enumerate(self.cabecera):
             self.txt_destino.heading(col, text=col)
-            self.txt_destino.column(col, minwidth = 0, width = tamanios[i], stretch = NO)
+            self.txt_destino.column(col, minwidth = 0, width = tamanios[i], stretch = YES)
         self.txt_destino.tag_configure('green', foreground='green')
         self.txt_destino.tag_configure('red', foreground='red')
         self.txt_destino.tag_configure('black', foreground='black')
@@ -69,6 +70,7 @@ class VentanaContador:
         self.txt_destino.grid(row=1, column=0, sticky=E + W + N + S)
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(1, weight=1)
+        self.root.rowconfigure(2, weight=1) # Allow Analysis to grow too
 
         # Menu
         menubar = Menu(self.root)
@@ -94,12 +96,14 @@ class VentanaContador:
         menubar.add_cascade(label="Ayuda", menu=helpmenu)
         
         self.txt_origen.bind('<Button-3>',self.rClicker, add='')
-        self.txt_origen.bind('<KeyPress>', self.put_text_in_txt_destino_on_key)
+        self.txt_origen.bind('<KeyRelease>', self.put_text_in_txt_destino_on_key)
         self.txt_origen.focus()
         
         self.statusbar = Label(self.root, text="", bd=1, relief=SUNKEN, anchor='e', justify=LEFT)
-        self.statusbar.grid(row=3, column=0, columnspan=2)
-    
+        self.statusbar.grid(row=3, column=0, columnspan=2, sticky=E+W)
+        
+        self._analysis_timer = None
+
     # https://stackoverflow.com/questions/4266566/stardand-context-menu-in-python-tkinter-text-widget-when-mouse-right-button-is-p
     def rClicker(self, e):
 
@@ -142,30 +146,43 @@ class VentanaContador:
             self.txt_destino.insert("", "end", values=(i+1, v, v_etiquetado, v_silabas, str(v_acentos), str(v_extra), v_tipo, v_coin),tags=(colores[i],))
 
     def put_text_in_txt_destino_on_key(self,event):
-        t = threading.Thread(target=self.put_text_in_txt_destino(), args=(self,))
-        del(t)
+        if self._analysis_timer:
+            self.root.after_cancel(self._analysis_timer)
+        self._analysis_timer = self.root.after(300, self.put_text_in_txt_destino)
 
     def put_text_in_txt_destino_menu(self):
-        t = threading.Thread(target=self.put_text_in_txt_destino(), args=(self,))
-        del(t)
+        self.put_text_in_txt_destino()
 
     def put_text_in_txt_destino(self):
-        fetched_content = self.txt_origen.get('1.0', 'end-1c')
+        fetched_content = self.txt_origen.get('1.0', 'end-1c').strip()
+        if not fetched_content:
+            return
 
         try:
             x = jumper.escandir_texto(fetched_content)
-            columna_silabas_v = list(map(list, zip(*x)))[2]
+            columna_silabas_v = [v[2] for v in x if len(v) > 2]
             versos_frecuentes = jumper.most_frequent(columna_silabas_v)
-        except:
+        except Exception as e:
+            print(f"Error in escandir_texto: {e}")
             return None
-        tendencia_versal = self.trend.get().strip().strip(',').split(',')
-        # si hay tendencia versal operamos con ella
-        if tendencia_versal[0] != '' and tendencia_versal[0].find('Auto') == -1:
-            tendencia_versal = [int(i) for i in tendencia_versal] if len(tendencia_versal) > 0 and self.RepresentsInt(tendencia_versal[0]) else []
+
+        # Determine tendencia_versal
+        current_trend_text = self.trend.get().strip()
+        if current_trend_text and "Auto:" not in current_trend_text:
+            # Manual entry
+            try:
+                tendencia_versal = [int(i.strip()) for i in current_trend_text.split(',') if i.strip().isdigit()]
+            except:
+                tendencia_versal = []
         else:
+            # Automatic entry
             tendencia_versal = list(versos_frecuentes.keys())
+            if not tendencia_versal and columna_silabas_v:
+                tendencia_versal = sorted(list(set(columna_silabas_v)))
+            
+            # Update the entry box if it's automatic
             self.trend.delete(0, END)
-            self.trend.insert(0, 'Auto: '+str(tendencia_versal).replace(']','').replace('[',''))
+            self.trend.insert(0, 'Auto: ' + ', '.join(map(str, tendencia_versal)))
 
 
         precision = 0
@@ -179,11 +196,13 @@ class VentanaContador:
 
         for i,v in enumerate(x):
             silabas_v = v[2]
-
-            # se convierte a porcetaje
-            v[-1] = int(v[-1]*100)
-
-            if len(tendencia_versal) > 0:
+            # Convert to percentage (integer 0-100)
+            ratio_val = v[-1]
+            if isinstance(ratio_val, float):
+                v[-1] = int(ratio_val * 100)
+            
+            color = 'black'
+            if tendencia_versal:
                 if silabas_v in tendencia_versal and v[-1] == 100:
                     precision += 1
                     color = 'green'
@@ -193,23 +212,22 @@ class VentanaContador:
                 else:
                     color = 'red'
             colores.append(color)
+
             self.html_table += '<tr style="color:' + color + '">'
-            self.html_table += '<td>' + str(i) + '</td>'
+            self.html_table += '<td>' + str(i+1) + '</td>'
             for item in v:
                 self.html_table += '<td>' + str(item) + '</td>'
             self.html_table += '</tr>'
+        
         self.html_table += '</table><br>'
         self.html_table += 'Tendencia versal: '+str(tendencia_versal)+'<br>'
 
-        calidad, regularidad = self.calcular_calidad_precision(x, versos_frecuentes)
-
-        #imprimimos regularidad y precision
+        calidad, regularidad = self.calcular_calidad_precision(x, versos_frecuentes if versos_frecuentes else tendencia_versal)
 
         resumen_precision = f"Precisión de los acentos:  {calidad:.1f}% Regularidad con los versos más frecuentes: {regularidad:.1f}%"
         self.statusbar['text'] = resumen_precision
         self.html_table += resumen_precision
         self.show(x,colores)
-        #self.txt_destino.set_content(self.html_table)
 
     def calcular_calidad_precision(self, analisis, versos_frecuentes):
         calidad = 0
