@@ -16,7 +16,28 @@
         <header class="mb-8">
             <h1 class="text-3xl font-bold text-slate-900 mb-2">Jumper Web</h1>
             <p class="text-slate-600">Analizador automático de métrica y acentuación en tiempo real.</p>
+            <p class="text-xs text-slate-400 mt-1">Algoritmo por: <span class="font-medium">Guillermo Marco Remón y Julio Gonzalo</span></p>
         </header>
+
+        <!-- Instructions and Legend -->
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl text-sm">
+                <h3 class="font-bold text-blue-800 mb-2">Instrucciones de uso</h3>
+                <ul class="list-disc list-inside text-blue-700 space-y-1">
+                    <li>Escribe o pega tu poema en el cuadro de texto.</li>
+                    <li>El análisis se actualiza automáticamente al dejar de escribir.</li>
+                    <li>Puedes forzar una métrica (ej: 11) en el cuadro de "Tendencia".</li>
+                </ul>
+            </div>
+            <div class="bg-slate-100 border border-slate-200 p-4 rounded-xl text-sm">
+                <h3 class="font-bold text-slate-800 mb-2">Leyenda de colores</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-600"></span> <span class="text-slate-700">Regular y perfecto</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-slate-900"></span> <span class="text-slate-700">Regular</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> <span class="text-slate-700">Irregular</span></div>
+                </div>
+            </div>
+        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Input Section -->
@@ -41,7 +62,15 @@
             <div class="lg:col-span-2 space-y-6">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                        <h2 class="font-semibold text-slate-700">Análisis Métrico</h2>
+                        <div class="flex items-center gap-4">
+                            <h2 class="font-semibold text-slate-700">Análisis Métrico</h2>
+                            <button id="downloadCsv" class="text-xs bg-white border border-slate-200 px-3 py-1 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-1 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Descargar CSV
+                            </button>
+                        </div>
                         <div id="statusInfo" class="text-sm font-medium text-slate-600"></div>
                     </div>
                     
@@ -81,8 +110,10 @@
         const trendInput = document.getElementById('trendInput');
         const resultsBody = document.getElementById('resultsBody');
         const statusInfo = document.getElementById('statusInfo');
+        const downloadCsv = document.getElementById('downloadCsv');
         
         let debounceTimer;
+        let lastAnalysisData = null;
 
         function analyze() {
             const text = poemInput.value.trim();
@@ -91,6 +122,7 @@
             if (!text) {
                 resultsBody.innerHTML = '<tr><td colspan="6" class="px-4 py-12 text-center text-slate-400 italic">Introduce un poema para ver el análisis.</td></tr>';
                 statusInfo.textContent = '';
+                lastAnalysisData = null;
                 return;
             }
 
@@ -105,6 +137,8 @@
                     console.error('Error:', data.error);
                     return;
                 }
+
+                lastAnalysisData = data;
 
                 // Update trend input if it was automatic
                 if (!trend || trend.startsWith('Auto:')) {
@@ -129,6 +163,30 @@
             .catch(err => console.error('Fetch error:', err));
         }
 
+        function downloadAsCsv() {
+            if (!lastAnalysisData || !lastAnalysisData.results.length) return;
+
+            const headers = ['N', 'Verso', 'Síl.', 'Acentos', 'Tipo', 'Ratio %'];
+            const rows = lastAnalysisData.results.map(r => [
+                r.n,
+                `"${r.verse.replace(/"/g, '""')}"`,
+                r.syllables,
+                `"${r.accents.replace(/"/g, '""')}"`,
+                `"${r.type.replace(/"/g, '""')}"`,
+                r.ratio
+            ]);
+
+            const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "analisis_jumper.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         poemInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(analyze, 300);
@@ -138,6 +196,8 @@
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(analyze, 500);
         });
+
+        downloadCsv.addEventListener('click', downloadAsCsv);
     </script>
 </body>
 </html>
