@@ -721,18 +721,25 @@ def escandir_texto(texto):
             
     # Extraer rimas asonantes (solo vocales) para la etiqueta visual
     etiquetas_rima = []
-    for rima in rimas:
+    for i, rima in enumerate(rimas):
         if not rima:
             etiquetas_rima.append("-")
             continue
         
         # Primero quitamos las 'u' mudas tras 'q' y 'g' para el patrón vocálico
-        # (pero mantenemos la 'ü' con diéresis)
         import re
         rima_fonetica = re.sub(r'([qg])u([eiéí])', r'\1\2', rima)
         
-        # Extraer solo las vocales y unirlas con guiones
+        # Extraer solo las vocales
         vocales_rima = [c for c in rima_fonetica if c in vocales]
+        
+        # Acentuar la primera vocal (que es la tónica de la rima por definición)
+        if vocales_rima:
+            primera = vocales_rima[0]
+            # Si ya tiene tilde la dejamos, si no, se la ponemos
+            if primera in vocales_no_acentuadas:
+                vocales_rima[0] = de_no_a_si_acentuadas[primera]
+                
         etiquetas_rima.append("-".join(vocales_rima))
         
     # Combinar rima con el análisis existente
