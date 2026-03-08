@@ -725,8 +725,13 @@ def escandir_texto(texto):
         if not rima:
             etiquetas_rima.append("-")
             continue
+        
+        # Primero quitamos las 'u' mudas tras 'q' y 'g' para el patrón vocálico
+        # (pero mantenemos la 'ü' con diéresis)
+        rima_fonetica = rima.replace('que', 'qe').replace('qui', 'qi').replace('gue', 'ge').replace('gui', 'gi')
+        
         # Extraer solo las vocales y unirlas con guiones
-        vocales_rima = [c for c in rima if c in vocales]
+        vocales_rima = [c for c in rima_fonetica if c in vocales]
         etiquetas_rima.append("-".join(vocales_rima))
         
     # Combinar rima con el análisis existente
