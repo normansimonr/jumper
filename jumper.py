@@ -723,16 +723,32 @@ def escandir_texto(texto):
     etiquetas_rima = []
     mapa_rimas = {}
     contador_rima = 0
-    letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     
-    for rima in rimas:
+    def generar_etiqueta(n, es_arte_mayor):
+        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        if not es_arte_mayor:
+            letras = letras.lower()
+        resultado = ""
+        while n >= 0:
+            resultado = letras[n % 26] + resultado
+            n = (n // 26) - 1
+        return resultado
+    
+    for i, rima in enumerate(rimas):
         if not rima:
             etiquetas_rima.append("-")
             continue
-        if rima not in mapa_rimas:
-            mapa_rimas[rima] = letras[contador_rima % len(letras)]
+        
+        # Determinar si es arte mayor (>8 sílabas)
+        es_arte_mayor = analisis[i][2] > 8
+        
+        # La rima se mapea considerando si es arte mayor o menor (A != a)
+        llave_rima = (rima, es_arte_mayor)
+        
+        if llave_rima not in mapa_rimas:
+            mapa_rimas[llave_rima] = generar_etiqueta(contador_rima, es_arte_mayor)
             contador_rima += 1
-        etiquetas_rima.append(mapa_rimas[rima])
+        etiquetas_rima.append(mapa_rimas[llave_rima])
         
     # Combinar rima con el análisis existente
     for i, v in enumerate(analisis):

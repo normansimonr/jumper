@@ -1,8 +1,12 @@
 import os
 from flask import Flask, render_template, request, jsonify
 import jumper
+import logging
 
 app = Flask(__name__)
+
+# Configure logging to see output in terminal
+logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/')
 def index():
@@ -42,7 +46,7 @@ def analyze():
         calidad_count = 0
         
         for i, v in enumerate(analysis_results):
-            # v format: [original_verse, analyzed_verse, syllables, accents_list, ideal_accents, type_name, ratio]
+            # v format: [original_verse, analyzed_verse, syllables, accents_list, ideal_accents, type_name, ratio, rhyme_sound, rhyme_label]
             verse_text = v[0]
             analyzed_verse = v[1]
             syllables = v[2]
@@ -50,6 +54,10 @@ def analyze():
             ideal_accents = v[4]
             type_name = v[5]
             ratio = int(v[6] * 100) if isinstance(v[6], (int, float)) else 0
+            
+            # Check if rhyme data exists
+            rhyme_sound = v[7] if len(v) > 7 else ''
+            rhyme_label = v[8] if len(v) > 8 else '-'
             
             color = 'text-gray-900' # default
             if tendencia_versal:
@@ -75,8 +83,8 @@ def analyze():
                 'type': type_name,
                 'ratio': ratio,
                 'color_class': color,
-                'rhyme_sound': v[7] if len(v) > 7 else '',
-                'rhyme_label': v[8] if len(v) > 8 else ''
+                'rhyme_sound': rhyme_sound,
+                'rhyme_label': rhyme_label
             })
 
         total_verses = len(analysis_results)
@@ -91,6 +99,7 @@ def analyze():
         })
 
     except Exception as e:
+        app.logger.error(f"Error during analysis: {e}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
