@@ -10,8 +10,21 @@ Está disponible para Windows y Linux en la Sección "Releases".
 
 Se ha añadido una interfaz web moderna basada en Flask y Tailwind CSS. Para ejecutarla:
 
-1. Instalar dependencias: `pip install flask`
-2. Ejecutar el servidor: `python3 run_web.py`
+1. (Opcional) Crear y activar un entorno virtual:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # En Linux/macOS
+   # o
+   venv\Scripts\activate     # En Windows
+   ```
+2. Instalar dependencias:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Ejecutar el servidor:
+   ```bash
+   python3 run_web.py
+   ```
 
 El navegador se abrirá automáticamente en `http://localhost:5000`.
 
