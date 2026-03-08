@@ -110,9 +110,9 @@ def normalizar_qu_gu(palabra):
         Returns:
             str: palabra sin el digrafo
     """
-    quitar = [('qu', 'q'), ('gue', 'ge'), ('gui', 'gi')]
-    for q in quitar:
-        palabra = palabra.replace(q[0], q[1])
+    import re
+    # Remove silent 'u' after 'q' or 'g' when followed by 'e, i, é, í'
+    palabra = re.sub(r'([qg])u([eiéí])', r'\1\2', palabra)
     return palabra
 
 
@@ -748,17 +748,19 @@ def extraer_rima(palabra):
     palabra = normalizar(palabra)
     if not palabra: return ""
     
-    # Normalización fonética básica
-    palabra = palabra.replace('v', 'b').replace('y', 'i').replace('h', '')
-    palabra = palabra.replace('ge', 'je').replace('gi', 'ji').replace('z', 's')
-    
     silabas, acento, factor = palabra_silabas_acentos(palabra)
+    
+    # Marcamos las 'u' mudas para NO contarlas como vocales
+    import re
+    palabra_temp = re.sub(r'([qg])u([eiéí])', r'\1_\2', palabra)
     
     # Encontrar la posición del carácter de la vocal acentuada
     vocal_count = 0
-    for i, c in enumerate(palabra):
+    for i, c in enumerate(palabra_temp):
         if c in vocales:
             vocal_count += 1
             if vocal_count == acento:
+                # Si la rima es un sonido agudo con u muda (ej: quí), devolvemos solo la í
+                # de lo contrario, devolvemos a partir de la vocal acentuada
                 return palabra[i:]
     return ""
