@@ -728,8 +728,8 @@ def escandir_texto(texto):
         
         # Primero quitamos las 'u' mudas tras 'q' y 'g' para el patrón vocálico
         # (pero mantenemos la 'ü' con diéresis)
-        rima_fonetica = rima.replace('que', 'qe').replace('qui', 'qi').replace('gue', 'ge').replace('gui', 'gi')
-        rima_fonetica = rima_fonetica.replace('qué', 'qé').replace('quí', 'qí').replace('gué', 'gé').replace('guí', 'gí')
+        import re
+        rima_fonetica = re.sub(r'([qg])u([eiéí])', r'\1\2', rima)
         
         # Extraer solo las vocales y unirlas con guiones
         vocales_rima = [c for c in rima_fonetica if c in vocales]
