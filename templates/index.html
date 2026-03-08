@@ -20,8 +20,8 @@
         </header>
 
         <!-- Instructions and Legend -->
-        <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl text-sm">
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl">
                 <h3 class="font-bold text-blue-800 mb-2">Instrucciones de uso</h3>
                 <ul class="list-disc list-inside text-blue-700 space-y-1">
                     <li>Escribe o pega tu poema en el cuadro de texto.</li>
@@ -29,51 +29,79 @@
                     <li>Puedes forzar una métrica (ej: 11) en el cuadro de "Tendencia".</li>
                 </ul>
             </div>
-            <div class="bg-slate-100 border border-slate-200 p-4 rounded-xl text-sm">
+            <div class="bg-slate-100 border border-slate-200 p-4 rounded-xl">
                 <h3 class="font-bold text-slate-800 mb-2">Leyenda de colores y símbolos</h3>
-                <div class="grid grid-cols-1 gap-3">
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-600"></span> <span class="text-slate-700 font-medium">Verde:</span> <span class="text-slate-500">La métrica coincide con la tendencia y el ritmo es perfecto según la tradición.</span></div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-slate-900"></span> <span class="text-slate-700 font-medium">Negro:</span> <span class="text-slate-500">La métrica coincide con la tendencia, pero presenta acentos extrarrítmicos.</span></div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> <span class="text-slate-700 font-medium">Rojo:</span> <span class="text-slate-500">La métrica del verso no coincide con la tendencia del poema.</span></div>
-                    <div class="flex items-center gap-2"><span class="text-slate-400 font-mono text-[10px]">gris</span> <span class="text-slate-700 font-medium">Texto gris:</span> <span class="text-slate-500">Muestra la escansión interna (sinalefas e hiatos marcados).</span></div>
+                <div class="grid grid-cols-1 gap-2">
+                    <div class="flex items-center gap-2 text-[12px]"><span class="w-3 h-3 rounded-full bg-green-600 shrink-0"></span> <span class="text-slate-700 font-medium whitespace-nowrap">Verde:</span> <span class="text-slate-500">Métrica coincide con tendencia y ritmo perfecto.</span></div>
+                    <div class="flex items-center gap-2 text-[12px]"><span class="w-3 h-3 rounded-full bg-slate-900 shrink-0"></span> <span class="text-slate-700 font-medium whitespace-nowrap">Negro:</span> <span class="text-slate-500">Métrica coincide con tendencia, pero tiene acentos extrarrítmicos.</span></div>
+                    <div class="flex items-center gap-2 text-[12px]"><span class="w-3 h-3 rounded-full bg-red-600 shrink-0"></span> <span class="text-slate-700 font-medium whitespace-nowrap">Rojo:</span> <span class="text-slate-500">La métrica del verso no coincide con la tendencia del poema.</span></div>
+                    <div class="flex items-center gap-2 text-[12px]"><span class="text-slate-400 font-mono text-[10px] shrink-0">gris</span> <span class="text-slate-700 font-medium whitespace-nowrap">Texto gris:</span> <span class="text-slate-500">Escansión interna (sinalefas e hiatos marcados).</span></div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Input Section -->
-            <div class="lg:col-span-1 space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Tendencia Versal</label>
-                    <input type="text" id="trendInput" 
-                           class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all mono text-sm"
-                           placeholder="Auto: (detectado automáticamente)">
-                    <p class="mt-2 text-xs text-slate-500">Ej: 11, 7 o dejar en blanco para detección automática.</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-[500px]">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Poema</label>
-                    <textarea id="poemInput" 
-                              class="flex-1 w-full p-4 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all mono text-sm resize-none"
-                              placeholder="Escribe o pega tu poema aquí..."></textarea>
+        <!-- Input Section (Full Width Above) -->
+        <div class="mb-8 space-y-4">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row gap-4 items-start md:items-center mb-4">
+                    <div class="flex-1 w-full">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Poema</label>
+                        <textarea id="poemInput" 
+                                  class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all mono text-sm resize-none"
+                                  placeholder="Escribe o pega tu poema aquí..."></textarea>
+                    </div>
+                    <div class="w-full md:w-64">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Tendencia Versal</label>
+                        <input type="text" id="trendInput" 
+                               class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all mono text-sm"
+                               placeholder="Auto: (detectado automáticamente)">
+                        <p class="mt-1 text-[10px] text-slate-500 italic">Ej: 11, 7 o dejar en blanco.</p>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Analysis Section -->
-            <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                        <div class="flex items-center gap-4">
-                            <h2 class="font-semibold text-slate-700">Análisis Métrico</h2>
-                            <button id="downloadCsv" class="text-xs bg-white border border-slate-200 px-3 py-1 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-1 shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Descargar CSV
-                            </button>
-                        </div>
-                        <div id="statusInfo" class="text-sm font-medium text-slate-600"></div>
+        <!-- Analysis Section (Full Width Below) -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-4">
+                        <h2 class="font-semibold text-slate-700">Análisis Métrico</h2>
+                        <button id="downloadCsv" class="text-xs bg-white border border-slate-200 px-3 py-1 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-1 shadow-sm font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Descargar CSV
+                        </button>
                     </div>
+                    <div id="statusInfo" class="text-sm font-medium text-slate-600 bg-white px-4 py-1 rounded-full border border-slate-100"></div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead class="bg-slate-50 sticky top-0 z-10">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 w-12 text-center">N</th>
+                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">Verso / Escansión</th>
+                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 w-20 text-center">Síl.</th>
+                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 w-24">Rima</th>
+                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 w-32">Acentos</th>
+                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">Tipo de Verso</th>
+                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 w-20 text-right">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody" class="divide-y divide-slate-100 mono text-sm">
+                            <!-- Results will be injected here -->
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center text-slate-400 italic">
+                                    Introduce un poema para ver el análisis.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
                     
                     <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
                         <table class="w-full text-left border-collapse">
@@ -122,7 +150,7 @@
             const trend = trendInput.value.trim();
 
             if (!text) {
-                resultsBody.innerHTML = '<tr><td colspan="7" class="px-4 py-12 text-center text-slate-400 italic">Introduce un poema para ver el análisis.</td></tr>';
+                resultsBody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400 italic">Introduce un poema para ver el análisis.</td></tr>';
                 statusInfo.textContent = '';
                 lastAnalysisData = null;
                 return;
@@ -153,13 +181,19 @@
                 // Update Table
                 resultsBody.innerHTML = data.results.map(row => `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 text-slate-400 border-b border-slate-100">${row.n}</td>
-                        <td class="px-4 py-3 border-b border-slate-100 ${row.color_class}">${row.verse}<br><span class="text-[10px] text-slate-400 font-normal">${row.analyzed}</span></td>
-                        <td class="px-4 py-3 border-b border-slate-100 font-semibold">${row.syllables}</td>
-                        <td class="px-4 py-3 border-b border-slate-100"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-600">${row.rhyme_label}</span> <span class="text-[10px] text-slate-400">-${row.rhyme_sound}</span></td>
-                        <td class="px-4 py-3 border-b border-slate-100 text-xs">${row.accents}</td>
-                        <td class="px-4 py-3 border-b border-slate-100 text-xs text-slate-500">${row.type}</td>
-                        <td class="px-4 py-3 border-b border-slate-100 text-right font-medium ${row.ratio === 100 ? 'text-green-600' : 'text-slate-400'}">${row.ratio}%</td>
+                        <td class="px-6 py-4 text-slate-400 border-b border-slate-100 text-center">${row.n}</td>
+                        <td class="px-6 py-4 border-b border-slate-100 ${row.color_class}">
+                            <div class="font-medium">${row.verse}</div>
+                            <div class="text-[11px] text-slate-400 font-normal mt-0.5">${row.analyzed}</div>
+                        </td>
+                        <td class="px-6 py-4 border-b border-slate-100 font-bold text-center text-slate-700">${row.syllables}</td>
+                        <td class="px-6 py-4 border-b border-slate-100">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">${row.rhyme_label}</span>
+                            <span class="text-[11px] text-slate-400 ml-1">-${row.rhyme_sound}</span>
+                        </td>
+                        <td class="px-6 py-4 border-b border-slate-100 text-xs text-slate-600">${row.accents}</td>
+                        <td class="px-6 py-4 border-b border-slate-100 text-xs text-slate-500 italic">${row.type}</td>
+                        <td class="px-6 py-4 border-b border-slate-100 text-right font-bold ${row.ratio === 100 ? 'text-green-600' : 'text-slate-400'}">${row.ratio}%</td>
                     </tr>
                 `).join('');
             })
