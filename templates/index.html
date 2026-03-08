@@ -30,11 +30,12 @@
                 </ul>
             </div>
             <div class="bg-slate-100 border border-slate-200 p-4 rounded-xl text-sm">
-                <h3 class="font-bold text-slate-800 mb-2">Leyenda de colores</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-600"></span> <span class="text-slate-700">Regular y perfecto</span></div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-slate-900"></span> <span class="text-slate-700">Regular</span></div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> <span class="text-slate-700">Irregular</span></div>
+                <h3 class="font-bold text-slate-800 mb-2">Leyenda de colores y símbolos</h3>
+                <div class="grid grid-cols-1 gap-3">
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-600"></span> <span class="text-slate-700 font-medium">Verde:</span> <span class="text-slate-500">Medida correcta y ritmo perfecto según la tradición.</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-slate-900"></span> <span class="text-slate-700 font-medium">Negro:</span> <span class="text-slate-500">Medida correcta, pero con variaciones rítmicas.</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> <span class="text-slate-700 font-medium">Rojo:</span> <span class="text-slate-500">La medida del verso no coincide con la tendencia del poema.</span></div>
+                    <div class="flex items-center gap-2"><span class="text-slate-400 font-mono text-[10px]">gris</span> <span class="text-slate-700 font-medium">Texto gris:</span> <span class="text-slate-500">Muestra la escansión interna (sinalefas e hiatos marcados).</span></div>
                 </div>
             </div>
         </div>
@@ -166,10 +167,11 @@
         function downloadAsCsv() {
             if (!lastAnalysisData || !lastAnalysisData.results.length) return;
 
-            const headers = ['N', 'Verso', 'Síl.', 'Acentos', 'Tipo', 'Ratio %'];
+            const headers = ['N', 'Verso', 'Escansión', 'Síl.', 'Acentos', 'Tipo', 'Ratio %'];
             const rows = lastAnalysisData.results.map(r => [
                 r.n,
                 `"${r.verse.replace(/"/g, '""')}"`,
+                `"${r.analyzed.replace(/"/g, '""')}"`,
                 r.syllables,
                 `"${r.accents.replace(/"/g, '""')}"`,
                 `"${r.type.replace(/"/g, '""')}"`,
