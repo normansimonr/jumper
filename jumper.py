@@ -719,41 +719,20 @@ def escandir_texto(texto):
         else:
             rimas.append("")
             
-    # Asignar etiquetas de rima (A, B, C...)
+    # Extraer rimas asonantes (solo vocales) para la etiqueta visual
     etiquetas_rima = []
-    mapa_rimas = {}
-    contador_rima = 0
-    
-    def generar_etiqueta(n, es_arte_mayor):
-        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        if not es_arte_mayor:
-            letras = letras.lower()
-        resultado = ""
-        while n >= 0:
-            resultado = letras[n % 26] + resultado
-            n = (n // 26) - 1
-        return resultado
-    
-    for i, rima in enumerate(rimas):
+    for rima in rimas:
         if not rima:
             etiquetas_rima.append("-")
             continue
-        
-        # Determinar si es arte mayor (>8 sílabas)
-        es_arte_mayor = analisis[i][2] > 8
-        
-        # La rima se mapea considerando si es arte mayor o menor (A != a)
-        llave_rima = (rima, es_arte_mayor)
-        
-        if llave_rima not in mapa_rimas:
-            mapa_rimas[llave_rima] = generar_etiqueta(contador_rima, es_arte_mayor)
-            contador_rima += 1
-        etiquetas_rima.append(mapa_rimas[llave_rima])
+        # Extraer solo las vocales y unirlas con guiones
+        vocales_rima = [c for c in rima if c in vocales]
+        etiquetas_rima.append("-".join(vocales_rima))
         
     # Combinar rima con el análisis existente
     for i, v in enumerate(analisis):
-        v.append(rimas[i])          # Índice 7: Sonido de la rima
-        v.append(etiquetas_rima[i]) # Índice 8: Etiqueta (A, B...)
+        v.append(rimas[i])          # Índice 7: Sonido de la rima completo
+        v.append(etiquetas_rima[i]) # Índice 8: Esquema vocálico (e-a, a-ua...)
         
     return analisis
 
